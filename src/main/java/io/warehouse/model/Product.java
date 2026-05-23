@@ -18,6 +18,22 @@ public abstract class Product {
     protected String zoneId;
     protected boolean isLowStock;
 
+    public Product() {
+        //No argument constructor
+    }
+
+    public Product(String sku, String name, String description, BigDecimal price, int quantity, int reorderThreshold, ProductType type, String zoneId, boolean isLowStock) {
+        this.sku = sku;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.reorderThreshold = reorderThreshold;
+        this.type = type;
+        this.zoneId = zoneId;
+        this.isLowStock = isLowStock;
+    }
+
     public String getId() {
         return id;
     }
