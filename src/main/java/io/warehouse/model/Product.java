@@ -2,7 +2,9 @@ package io.warehouse.model;
 
 import io.warehouse.enums.ProductType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "products")
 public abstract class Product {
     @Id
     protected String id;

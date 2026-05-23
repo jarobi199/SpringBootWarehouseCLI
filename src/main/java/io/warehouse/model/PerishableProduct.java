@@ -1,17 +1,21 @@
 package io.warehouse.model;
 
+import io.warehouse.enums.ProductType;
 import io.warehouse.exception.MovementValidationException;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-@Document(collection = "products")
 public class PerishableProduct extends Product {
 
     private final LocalDate expiryDate;
 
-    public PerishableProduct(LocalDate expiryDate) {
+    public PerishableProduct() {
+        this.expiryDate = null;
+    }
+
+    public PerishableProduct(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold, ProductType type, String zoneId, LocalDate expiryDate) {
+        super(sku, name, description, unitPrice, quantity, reorderThreshold, type, zoneId);
         this.expiryDate = expiryDate;
     }
 
