@@ -15,12 +15,12 @@ public class PerishableProduct extends Product {
         this.expiryDate = expiryDate;
     }
 
-    public boolean isNearingExpiry(int days) {
-        return expiryDate.isBefore(LocalDate.now().plusDays(days));
-    }
-
     public long daysUntilExpiry() {
         return ChronoUnit.DAYS.between(LocalDate.now(), expiryDate);
+    }
+
+    public boolean isNearingExpiry(int days) {
+        return expiryDate.isBefore(LocalDate.now().plusDays(days));
     }
 
     @Override
@@ -29,6 +29,11 @@ public class PerishableProduct extends Product {
         if(expiryDate.isBefore(LocalDate.now())) {
             throw new MovementValidationException("This product has expired!");
         }
+    }
+
+    @Override
+   public double calculateValue() {
+        return quantity * unitPrice;
     }
 
 }

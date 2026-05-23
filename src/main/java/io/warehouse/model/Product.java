@@ -3,35 +3,31 @@ package io.warehouse.model;
 import io.warehouse.enums.ProductType;
 import org.springframework.data.annotation.Id;
 
-import java.math.BigDecimal;
-
 public abstract class Product {
     @Id
     protected String id;
     protected String sku;
     protected String name;
     protected String description;
-    protected BigDecimal price;
+    protected double unitPrice;
     protected int quantity;
     protected int reorderThreshold;
     protected ProductType type;
     protected String zoneId;
-    protected boolean isLowStock;
 
     public Product() {
         //No argument constructor
     }
 
-    public Product(String sku, String name, String description, BigDecimal price, int quantity, int reorderThreshold, ProductType type, String zoneId, boolean isLowStock) {
+    public Product(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold, ProductType type, String zoneId) {
         this.sku = sku;
         this.name = name;
         this.description = description;
-        this.price = price;
+        this.unitPrice = unitPrice;
         this.quantity = quantity;
         this.reorderThreshold = reorderThreshold;
         this.type = type;
         this.zoneId = zoneId;
-        this.isLowStock = isLowStock;
     }
 
     public String getId() {
@@ -66,12 +62,12 @@ public abstract class Product {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public double getUnitPrice() {
+        return unitPrice;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
     public int getQuantity() {
@@ -107,12 +103,10 @@ public abstract class Product {
     }
 
     public boolean isLowStock() {
-        return isLowStock;
-    }
-
-    public void setLowStock(boolean lowStock) {
-        isLowStock = lowStock;
+        return quantity < reorderThreshold;
     }
 
     public abstract void validateMovement(StockMovement stockMovement, Zone targetZone);
+
+    public abstract  double calculateValue();
 }
