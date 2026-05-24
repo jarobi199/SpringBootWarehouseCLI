@@ -2,7 +2,9 @@ package io.warehouse.model;
 
 import io.warehouse.enums.ZoneType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "zones")
 public class Zone {
     @Id
     private String id;
