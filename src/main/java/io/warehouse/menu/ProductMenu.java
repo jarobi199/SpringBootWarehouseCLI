@@ -1,5 +1,6 @@
 package io.warehouse.menu;
 
+import io.warehouse.enums.HazardClass;
 import io.warehouse.enums.ProductType;
 import io.warehouse.enums.ZoneType;
 import io.warehouse.model.Zone;
@@ -85,11 +86,13 @@ public class ProductMenu implements IMenu{
 
                 productService.createPerishable(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, expiryDate);
             }
-            else if(ProductType.BULK.equals(productType)) {
-                System.out.println("Enter the weight per unit:");
-                double weightPerUnit = InputHandler.getDoubleInput();
+            else if(ProductType.HAZARDOUS.equals(productType)) {
+                System.out.println("Enter if this product requires ventilation:");
+                boolean requiresVentilation = InputHandler.getBooleanInput();
+                System.out.println("Enter the hazard class (FLAMMABLE, CORROSIVE, TOXIC, EXPLOSIVE):");
+                HazardClass hazardClass = HazardClass.valueOf(InputHandler.getStringInput());
 
-                productService.createBulk(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, weightPerUnit);
+                productService.createHazardous(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, requiresVentilation,hazardClass );
             }
             else if(ProductType.FRAGILE.equals(productType)) {
                 System.out.println("Enter the handling instructions:");
@@ -98,6 +101,10 @@ public class ProductMenu implements IMenu{
                 List<ZoneType> allowedZones =  Stream.of(InputHandler.getStringInput().split(",")).map(ZoneType::valueOf).toList();
 
                 productService.createFragile(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, instructions, allowedZones);
+            }
+            else
+            {
+                productService.createStandard(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId);
             }
         }
         else {

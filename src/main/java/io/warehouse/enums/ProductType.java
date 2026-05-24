@@ -1,5 +1,5 @@
 package io.warehouse.enums;
 
 public enum ProductType {
-    STANDARD, PERISHABLE, BULK, FRAGILE
+    STANDARD, PERISHABLE, HAZARDOUS, FRAGILE
 }

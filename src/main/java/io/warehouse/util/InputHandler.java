@@ -23,6 +23,10 @@ public class InputHandler {
         return LocalDate.parse(input.nextLine());
     }
 
+    public static boolean getBooleanInput() {
+        return Boolean.parseBoolean(input.nextLine());
+    }
+
     public static void closeInput() {
         input.close();
     }

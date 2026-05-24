@@ -108,7 +108,10 @@ public abstract class Product {
         return quantity < reorderThreshold;
     }
 
+    public double calculateValue() {
+        return quantity * unitPrice;
+    }
+
     public abstract void validateMovement(StockMovement stockMovement, Zone targetZone);
 
-    public abstract  double calculateValue();
 }

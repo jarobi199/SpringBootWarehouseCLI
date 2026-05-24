@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends MongoRepository<Product, String> {
-    List<Product> findBySku(String name);
+    List<Product> findBySku(String sku);
+    List<Product> findByZoneId(String zoneId);
 }

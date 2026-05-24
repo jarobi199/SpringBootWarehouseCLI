@@ -20,9 +20,28 @@ public class ZoneMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 -> addZone();
+                case 2 -> listZones();
+                case 3 -> viewZone();
+                case 4 -> deleteZone();
             }
         }
         while (choice != 0);
+    }
+
+    public void viewZone() {
+        System.out.println("Enter the zone ID:");
+        String zoneID = InputHandler.getStringInput();
+        zoneService.viewZone(zoneID);
+    }
+
+    public void deleteZone() {
+        System.out.println("Enter the ID of the zone to delete:");
+        String id = InputHandler.getStringInput();
+        zoneService.deleteZone(id);
+    }
+
+    public void listZones() {
+        zoneService.listZones();
     }
 
     public void addZone() {

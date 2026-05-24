@@ -39,9 +39,4 @@ public class PerishableProduct extends Product {
         }
     }
 
-    @Override
-   public double calculateValue() {
-        return quantity * unitPrice;
-    }
-
 }
