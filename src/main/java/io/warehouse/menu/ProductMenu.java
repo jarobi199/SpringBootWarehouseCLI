@@ -5,7 +5,6 @@ import io.warehouse.enums.ZoneType;
 import io.warehouse.model.Zone;
 import io.warehouse.service.ProductService;
 import io.warehouse.service.ZoneService;
-import io.warehouse.util.CommandLineTable;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -78,7 +77,7 @@ public class ProductMenu implements IMenu{
             System.out.println("Enter the quantity:");
             int quantity = InputHandler.getIntegerInput();
             System.out.println("Select the zone:");
-            String zoneId = getReceivingZoneSelection();
+            String zoneId = getZoneSelection();
 
             if(ProductType.PERISHABLE.equals(productType)) {
                 System.out.println("Enter the expiration date (yyyy-MM-dd):");
@@ -107,14 +106,14 @@ public class ProductMenu implements IMenu{
         System.out.println("Product added!");
     }
 
-    private String getReceivingZoneSelection() {
-        List<Zone> receivingZones = zoneService.getZonesByZoneType(ZoneType.RECEIVING);
-        for(int i = 0; i < receivingZones.size(); i++) {
-            Zone zone = receivingZones.get(i);
+    private String getZoneSelection() {
+        List<Zone> zones = zoneService.getAllZones();
+        for(int i = 0; i < zones.size(); i++) {
+            Zone zone = zones.get(i);
             System.out.println(i + 1 + ") " + zone.getName() + "(" + zone.getType().name() + ")");
         }
         int zoneIndex =  InputHandler.getIntegerInput() - 1;
-        return receivingZones.get(zoneIndex).getId();
+        return zones.get(zoneIndex).getId();
     }
 
     @Override
