@@ -63,7 +63,7 @@ public class ProductMenu implements IMenu{
     public void addProduct() {
 
         if(zoneService.hasAvailableZones()) {
-            System.out.println("Enter the product type (STANDARD, PERISHABLE, BULK, FRAGILE):");
+            System.out.println("Enter the product type (STANDARD, PERISHABLE, HAZARDOUS, FRAGILE):");
             ProductType productType = ProductType.valueOf(InputHandler.getStringInput());
             System.out.println("Enter the sku:");
             String sku = InputHandler.getStringInput();

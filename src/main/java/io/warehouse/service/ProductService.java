@@ -32,38 +32,61 @@ public class ProductService {
     public void createPerishable(String sku, String name, String description, double unitPrice, int quantity,
                                  int reorderThreshold, ProductType productType, String zoneId, LocalDate expiryDate) {
         Product perishableProduct = ProductFactory.createPerishable(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, expiryDate);
-        updateZoneOccupancy(zoneId, quantity);
-        productRepository.save(perishableProduct);
+        if(updateZoneOccupancy(zoneId, quantity)) {
+            productRepository.save(perishableProduct);
+        }
+        else
+        {
+            System.out.println("This product cannot be added! The zone does not have enough capacity.");
+        }
     }
 
     public void createFragile(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold,
                               ProductType productType, String zoneId, String instructions, List<ZoneType> allowedZones) {
         Product fragileProduct = ProductFactory.createFragile(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, instructions, allowedZones);
-        updateZoneOccupancy(zoneId, quantity);
-        productRepository.save(fragileProduct);
+        if(updateZoneOccupancy(zoneId, quantity)) {
+            productRepository.save(fragileProduct);
+        }
+        else
+        {
+            System.out.println("This product cannot be added! The zone does not have enough capacity.");
+        }
     }
 
     public void createHazardous(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold,
                               ProductType productType, String zoneId, boolean requiresVentilation, HazardClass hazardClass) {
         Product hazardousProduct = ProductFactory.createHazardous(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, requiresVentilation, hazardClass);
-        updateZoneOccupancy(zoneId, quantity);
-        productRepository.save(hazardousProduct);
+        if(updateZoneOccupancy(zoneId, quantity)) {
+            productRepository.save(hazardousProduct);
+        }
+        else
+        {
+            System.out.println("This product cannot be added! The zone does not have enough capacity.");
+        }
     }
 
     public void createStandard(String sku, String name, String description, double unitPrice, int quantity,
                                int reorderThreshold, ProductType productType, String zoneId) {
         Product standardProduct = ProductFactory.createStandard(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId);
-        updateZoneOccupancy(zoneId, quantity);
-        productRepository.save(standardProduct);
+        if(updateZoneOccupancy(zoneId, quantity)) {
+            productRepository.save(standardProduct);
+        }
+        else
+        {
+            System.out.println("This product cannot be added! The zone does not have enough capacity.");
+        }
     }
 
-    public void updateZoneOccupancy(String zoneId, int quantity) {
+    public boolean updateZoneOccupancy(String zoneId, int quantity) {
+        boolean result = false;
         Optional<Zone> optionalZone = zoneRepository.findById(zoneId);
-        if(optionalZone.isPresent()) {
+        if(optionalZone.isPresent() && optionalZone.get().hasCapacity(quantity)) {
             Zone zone = optionalZone.get();
             zone.setCurrentOccupancy(zone.getCurrentOccupancy() + quantity);
             zoneRepository.save(zone);
+            result = true;
         }
+        return result;
     }
 
     public void listProducts() {
@@ -151,9 +174,16 @@ public class ProductService {
         }
         else
         {
-            //TODO: Add code here
+            CommandLineTable stockMovementSummary = new CommandLineTable();
+            stockMovementSummary.setShowVerticalLines(true);
+            stockMovementSummary.setHeaders("SKU", "FROM ZONE","TO ZONE","MOVEMENT TYPE","TIMESTAMP" );
+            stockMovements.forEach(stockMovement -> {
+                Zone fromZone = zoneRepository.findById(zone.getId()).get();
+                Zone toZone = zoneRepository.findById(product.getZoneId()).get();
+                stockMovementSummary.addRow(product.getSku(),fromZone.getName(), toZone.getName(), stockMovement.movementType().name(), stockMovement.timestamp().toString());
+            });
+            stockMovementSummary.print();
         }
-
 
         System.out.println();
         ReorderThresholdStrategy reorderThresholdStrategy = new ReorderThresholdStrategy();
