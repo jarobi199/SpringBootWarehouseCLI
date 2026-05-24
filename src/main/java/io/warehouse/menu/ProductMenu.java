@@ -2,6 +2,7 @@ package io.warehouse.menu;
 
 import io.warehouse.enums.ProductType;
 import io.warehouse.enums.ZoneType;
+import io.warehouse.model.Zone;
 import io.warehouse.service.ProductService;
 import io.warehouse.service.ZoneService;
 import io.warehouse.util.InputHandler;
@@ -51,8 +52,8 @@ public class ProductMenu implements IMenu{
             int reorderThreshold = InputHandler.getIntegerInput();
             System.out.println("Enter the quantity:");
             int quantity = InputHandler.getIntegerInput();
-            System.out.println("Enter the zone ID:");
-            String zoneId = InputHandler.getStringInput();
+            System.out.println("Select the zone:");
+            String zoneId = getReceivingZoneSelection();
 
             if(ProductType.PERISHABLE.equals(productType)) {
                 System.out.println("Enter the expiration date (yyyy-MM-dd):");
@@ -78,7 +79,17 @@ public class ProductMenu implements IMenu{
         else {
             System.out.println("No available zones! You need to create a zone in order to add a product. \n");
         }
+        System.out.println("Product added!");
+    }
 
+    private String getReceivingZoneSelection() {
+        List<Zone> receivingZones = zoneService.getZonesByZoneType(ZoneType.RECEIVING);
+        for(int i = 0; i < receivingZones.size(); i++) {
+            Zone zone = receivingZones.get(i);
+            System.out.println(i + 1 + ") " + zone.getName() + "(" + zone.getType().name() + ")");
+        }
+        int zoneIndex =  InputHandler.getIntegerInput() - 1;
+        return receivingZones.get(zoneIndex).getId();
     }
 
     @Override

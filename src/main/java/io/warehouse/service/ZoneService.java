@@ -6,6 +6,8 @@ import io.warehouse.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ZoneService {
 
@@ -19,5 +21,13 @@ public class ZoneService {
     public void addZone(String name, ZoneType zoneType, int capacity) {
         Zone zone = new Zone(name, zoneType, capacity);
         zoneRepository.save(zone);
+    }
+
+    public List<Zone> getAllZones() {
+        return zoneRepository.findAll();
+    }
+
+    public List<Zone> getZonesByZoneType(ZoneType zoneType) {
+        return zoneRepository.findByType(zoneType);
     }
 }
