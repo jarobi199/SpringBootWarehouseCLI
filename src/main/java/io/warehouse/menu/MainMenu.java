@@ -24,7 +24,7 @@ public class MainMenu implements IMenu {
         IMenu menu;
 
         displayTitle();
-        authenticateMenu.show();
+        //authenticateMenu.show();
         System.out.println();
 
         do {

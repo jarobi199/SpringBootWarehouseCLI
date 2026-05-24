@@ -32,6 +32,7 @@ public class ProductMenu implements IMenu{
             switch (choice) {
                 case 1 -> addProduct();
                 case 2 -> listProducts();
+                case 3 -> viewProductDetail();
                 case 4 -> deleteProduct();
                 case 5 -> lowStockAlerts();
             }
@@ -39,7 +40,13 @@ public class ProductMenu implements IMenu{
         while (choice != 0);
     }
 
-    private void lowStockAlerts() {
+    public void viewProductDetail() {
+        System.out.println("Enter the SKU of the product that you want to view:");
+        String sku = InputHandler.getStringInput();
+        productService.displayProductDetails(sku);
+    }
+
+    public void lowStockAlerts() {
         productService.listLowStockAlerts();
     }
 

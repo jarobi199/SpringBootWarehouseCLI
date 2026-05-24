@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface StockMovementRepository extends MongoRepository<StockMovement, String> {
     List<StockMovement> findByProductId(String productId);
+    List<StockMovement> findTop3ByProductIdOrderByTimestampDesc(String productId);
 }

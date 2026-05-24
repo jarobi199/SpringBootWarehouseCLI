@@ -18,6 +18,10 @@ public class BulkProduct extends Product {
 
     private static final int MINIMUM_TRANSFER_WEIGHT = 50;
 
+    public double getWeightPerUnit() {
+        return weightPerUnit;
+    }
+
     public double totalWeight() {
         return quantity * weightPerUnit;
     }
