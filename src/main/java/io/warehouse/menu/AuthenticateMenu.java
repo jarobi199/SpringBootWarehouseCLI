@@ -18,7 +18,7 @@ public class AuthenticateMenu implements IMenu {
         while (!authenticated) {
             System.out.println("Please enter your username:");
             String username = InputHandler.getStringInput();
-            System.out.println("Please enter your password:");
+            System.out.println("Please enter your PIN:");
             String password = InputHandler.getStringInput();
             authenticated = userService.authenticate(username, password);
             if (authenticated) {
