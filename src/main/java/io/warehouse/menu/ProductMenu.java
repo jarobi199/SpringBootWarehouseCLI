@@ -5,6 +5,7 @@ import io.warehouse.enums.ZoneType;
 import io.warehouse.model.Zone;
 import io.warehouse.service.ProductService;
 import io.warehouse.service.ZoneService;
+import io.warehouse.util.CommandLineTable;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,26 @@ public class ProductMenu implements IMenu{
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 -> addProduct();
+                case 2 -> listProducts();
+                case 4 -> deleteProduct();
+                case 5 -> lowStockAlerts();
             }
         }
         while (choice != 0);
+    }
+
+    private void lowStockAlerts() {
+        productService.listLowStockAlerts();
+    }
+
+    public void deleteProduct() {
+        System.out.println("Enter the SKU of the product you want to delete:");
+        String sku = InputHandler.getStringInput();
+        productService.deleteProduct(sku);
+    }
+
+    public void listProducts() {
+       productService.listProducts();
     }
 
     public void addProduct() {

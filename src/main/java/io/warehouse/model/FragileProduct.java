@@ -20,6 +20,14 @@ public class FragileProduct extends Product {
         this.allowedZones = allowedZones;
     }
 
+    public String getHandlingInstructions() {
+        return handlingInstructions;
+    }
+
+    public List<ZoneType> getAllowedZones() {
+        return allowedZones;
+    }
+
     @Override
     public void validateMovement(StockMovement stockMovement, Zone targetZone) {
         //Rejects transfer to disallowed zone types

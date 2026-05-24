@@ -88,7 +88,7 @@ public class CommandLineTable {
     public static void main(String[] args) {
         CommandLineTable table = new CommandLineTable();
         table.setShowVerticalLines(true);//if false (default) then no vertical lines are shown
-        table.setHeaders("one", "two", "three");//optional - if not used then there will be no header and horizontal lines
+        table.setHeaders("on", "two", "three");//optional - if not used then there will be no header and horizontal lines
         table.addRow("super", "broccoli", "flexible");
         table.addRow("assumption", "announcement", "reflection");
         table.addRow("logic", "pleasant", "wild");

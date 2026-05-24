@@ -19,6 +19,10 @@ public class PerishableProduct extends Product {
         this.expiryDate = expiryDate;
     }
 
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
     public long daysUntilExpiry() {
         return ChronoUnit.DAYS.between(LocalDate.now(), expiryDate);
     }
