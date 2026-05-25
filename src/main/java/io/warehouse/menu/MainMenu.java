@@ -1,5 +1,6 @@
 package io.warehouse.menu;
 
+import io.warehouse.service.StockMovementService;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ public class MainMenu implements IMenu {
     private ZoneMenu zoneMenu;
     @Autowired
     private SettingsMenu settingsMenu;
+    @Autowired
+    private StockMovementMenu  stockMovementMenu;
     @Autowired
     private GoodbyeMenu goodbyeMenu;
 
@@ -33,6 +36,7 @@ public class MainMenu implements IMenu {
             menu = switch (choice) {
                 case 1 -> productMenu;
                 case 2 -> zoneMenu;
+                case 3 -> stockMovementMenu;
                 case 5 -> settingsMenu;
                 case 0 -> goodbyeMenu;
                 default -> throw new IllegalStateException("Unexpected value: " + choice);
