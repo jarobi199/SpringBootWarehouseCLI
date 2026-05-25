@@ -1,5 +1,6 @@
 package io.warehouse.menu;
 
+import io.warehouse.enums.MovementType;
 import io.warehouse.model.Zone;
 import io.warehouse.service.StockMovementService;
 import io.warehouse.service.ZoneService;
@@ -56,7 +57,7 @@ public class StockMovementMenu implements IMenu{
         System.out.println("Enter operator notes:");
         String operatorNotes = InputHandler.getStringInput();
 
-        stockMovementService.receiveGoods(sku, zoneId, quantity, operatorNotes);
+        stockMovementService.processMovement(sku, null, zoneId, quantity, MovementType.RECEIVED, operatorNotes);
     }
 
 

@@ -25,34 +25,33 @@ public class StockMovementService {
     private ZoneRepository zoneRepository;
     private final ReorderThresholdStrategy alertStrategy = new ReorderThresholdStrategy();
 
-    public void receiveGoods(String sku, String toZoneId, int quantity, String operatorNotes) {
-        Product product = productRepository.findBySku(sku).stream().findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
-        StockMovement stockMovement = new StockMovement(null, product.getId(), null, toZoneId, quantity, MovementType.RECEIVED, LocalDateTime.now(), operatorNotes);
-        processMovement(product, stockMovement);
-    }
-
-    private void processMovement(Product product, StockMovement movement) {
-        // 1. Load zone
-        Zone target = zoneRepository.findById(movement.toZoneId())
+    public void processMovement(String sku, String fromZoneId, String toZoneId,  int quantity, MovementType movementType,String operatorNotes) {
+        // 1. Load product and zone
+        Zone target = zoneRepository.findById(toZoneId)
                 .orElseThrow(() -> new EntityNotFoundException("Zone not found"));
+        Product product = productRepository.findBySku(sku).stream()
+                .findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
+
+        // 2. Create StockMovement object
+        StockMovement stockMovement = new StockMovement(null, product.getId(), fromZoneId, toZoneId, quantity, movementType, LocalDateTime.now(), operatorNotes);
 
         // 2. Check zone capacity
-        if (!target.hasCapacity(movement.quantity())) {
+        if (!target.hasCapacity(stockMovement.quantity())) {
             throw new MovementValidationException("Zone at capacity");
         }
 
         // 3. Subtype enforces its own rules
-        product.validateMovement(movement, target);
+        product.validateMovement(stockMovement, target);
 
         // 4. Update quantity on hand
-        product.adjustQuantity(movement.quantity(), movement.movementType());
+        //product.adjustQuantity(stockMovement.quantity(), stockMovement.movementType());
         productRepository.save(product);
 
         // 5. Persist the immutable movement record
-        StockMovement saved = stockMovementRepository.save(movement);
+        StockMovement saved = stockMovementRepository.save(stockMovement);
 
         // 6. Check low-stock alert after any outbound movement
-        MovementType type = movement.movementType();
+        MovementType type = stockMovement.movementType();
         if (type == MovementType.DISPATCHED || type == MovementType.ADJUSTMENT) {
             System.out.println(alertStrategy.evaluate(product));
         }
