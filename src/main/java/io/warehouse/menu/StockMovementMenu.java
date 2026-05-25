@@ -1,6 +1,8 @@
 package io.warehouse.menu;
 
 import io.warehouse.enums.MovementType;
+import io.warehouse.exception.EntityNotFoundException;
+import io.warehouse.exception.MovementValidationException;
 import io.warehouse.model.Zone;
 import io.warehouse.service.StockMovementService;
 import io.warehouse.service.ZoneService;
@@ -57,7 +59,14 @@ public class StockMovementMenu implements IMenu{
         System.out.println("Enter operator notes:");
         String operatorNotes = InputHandler.getStringInput();
 
-        stockMovementService.processMovement(sku, null, zoneId, quantity, MovementType.RECEIVED, operatorNotes);
+        try
+        {
+            stockMovementService.processMovement(sku, null, zoneId, quantity, MovementType.RECEIVED, operatorNotes);
+            System.out.println("Goods received successfully!");
+        }
+        catch (MovementValidationException | EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
 
