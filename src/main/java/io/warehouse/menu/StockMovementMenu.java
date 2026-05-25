@@ -33,7 +33,9 @@ public class StockMovementMenu implements IMenu{
     }
 
     public void movementHistory() {
-
+        System.out.println("Enter the product SKU:");
+        String sku = InputHandler.getStringInput();
+        stockMovementService.displayMovementHistory(sku);
     }
 
     public void postAdjustment() {

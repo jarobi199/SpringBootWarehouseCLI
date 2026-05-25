@@ -78,4 +78,9 @@ public class Zone {
     public void removeOccupancy(int units) {
         currentOccupancy = currentOccupancy - units;
     }
+
+    public String getDisplayName() {
+        return name +  " (" + type.name() + ")";
+    }
+
 }

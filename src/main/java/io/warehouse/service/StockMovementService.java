@@ -11,10 +11,12 @@ import io.warehouse.model.Zone;
 import io.warehouse.repository.ProductRepository;
 import io.warehouse.repository.StockMovementRepository;
 import io.warehouse.repository.ZoneRepository;
+import io.warehouse.util.CommandLineTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class StockMovementService {
@@ -98,4 +100,29 @@ public class StockMovementService {
         }
     }
 
+    public void displayMovementHistory(String sku) {
+        String originStr = "N/A";
+        String destinationStr = "N/A";
+        Product product = productRepository.findBySku(sku).stream()
+                .findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
+        List<StockMovement> stockMovements = stockMovementRepository.findByProductId(product.getId());
+        CommandLineTable table = new CommandLineTable();
+        table.setShowVerticalLines(true);
+        table.setHeaders("ID", "TYPE", "QUANTITY","ORIGIN", "DESTINATION", "TIMESTAMP", "OPERATOR NOTES");
+        for (StockMovement stockMovement : stockMovements) {
+            if(stockMovement.fromZoneId() != null) {
+                Zone origin = zoneRepository.findById(stockMovement.fromZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
+                originStr = origin.getDisplayName();
+            }
+            if(stockMovement.toZoneId() != null) {
+                Zone origin = zoneRepository.findById(stockMovement.toZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
+                destinationStr = origin.getDisplayName();
+            }
+
+            Zone destination = zoneRepository.findById(stockMovement.toZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
+            table.addRow(stockMovement.id(), stockMovement.movementType().name(), String.valueOf(stockMovement.quantity()),
+                    originStr, destinationStr, stockMovement.timestamp().toString(),stockMovement.operatorNotes());
+        }
+        table.print();
+    }
 }
