@@ -1,5 +1,6 @@
 package io.warehouse.model;
 
+import io.warehouse.enums.MovementType;
 import io.warehouse.enums.ProductType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -110,6 +111,14 @@ public abstract class Product {
 
     public double calculateValue() {
         return quantity * unitPrice;
+    }
+
+    public void adjustQuantity(int quantity, MovementType type) {
+        switch (type) {
+            case RECEIVED, ADJUSTMENT -> this.quantity += quantity;
+            case DISPATCHED  -> this.quantity -= quantity;
+            case TRANSFERRED -> {} // quantity unchanged, zoneId updated separately
+        }
     }
 
     public abstract void validateMovement(StockMovement stockMovement, Zone targetZone);

@@ -1,6 +1,5 @@
 package io.warehouse.menu;
 
-import io.warehouse.service.StockMovementService;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,7 +44,6 @@ public class MainMenu implements IMenu {
         }
         while (choice != 0);
 
-
         InputHandler.closeInput();
     }
 
@@ -65,6 +63,5 @@ public class MainMenu implements IMenu {
         System.out.println("   Welcome To The Warehouse Inventory Manager Application!");
         System.out.println("=============================================================");
     }
-
 
 }
