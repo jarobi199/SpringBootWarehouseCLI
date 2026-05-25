@@ -35,22 +35,22 @@ public class StockMovementService {
         // 2. Create StockMovement object
         StockMovement stockMovement = new StockMovement(null, product.getId(), fromZoneId, toZoneId, quantity, movementType, LocalDateTime.now(), operatorNotes);
 
-        // 2. Check zone capacity
+        // 3. Check zone capacity
         if (!target.hasCapacity(stockMovement.quantity())) {
             throw new MovementValidationException("Zone at capacity");
         }
 
-        // 3. Subtype enforces its own rules
+        // 4. Subtype enforces its own rules
         product.validateMovement(stockMovement, target);
 
-        // 4. Update quantity on hand
+        // 5. Update quantity on hand
         product.adjustQuantity(stockMovement.quantity(), stockMovement.movementType());
         productRepository.save(product);
 
-        // 5. Persist the immutable movement record
+        // 6. Persist the immutable movement record
         StockMovement saved = stockMovementRepository.save(stockMovement);
 
-        // 6. Check low-stock alert after any outbound movement
+        // 7. Check low-stock alert after any outbound movement
         MovementType type = stockMovement.movementType();
         if (type == MovementType.DISPATCHED || type == MovementType.ADJUSTMENT) {
             System.out.println(alertStrategy.evaluate(product));
