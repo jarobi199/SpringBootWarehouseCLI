@@ -1,10 +1,17 @@
 package io.warehouse.service;
 
+import io.warehouse.enums.MovementType;
 import io.warehouse.model.StockMovement;
+
+import java.time.LocalDateTime;
 
 public class StockMovementService {
 
-    /*public StockMovement processMovement(StockMovement movement) {
+    public void receiveGoods(String sku, String toZoneId, int quantity, String operatorNotes) {
+        StockMovement stockMovement = new StockMovement(null, sku, null, toZoneId, quantity, MovementType.RECEIVED, LocalDateTime.now(), operatorNotes);
+    }
+
+    public StockMovement processMovement(StockMovement movement) {
         // 1. Load product and zone(s)
         Product product = productRepo.findById(movement.getProductId())
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
@@ -33,5 +40,6 @@ public class StockMovementService {
         }
 
         return saved;
-    }*/
+    }
+
 }
