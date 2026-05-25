@@ -1,16 +1,12 @@
 package io.warehouse.menu;
 
-import io.warehouse.enums.MovementType;
 import io.warehouse.exception.EntityNotFoundException;
 import io.warehouse.exception.MovementValidationException;
-import io.warehouse.model.Zone;
 import io.warehouse.service.StockMovementService;
 import io.warehouse.service.ZoneService;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class StockMovementMenu implements IMenu{
@@ -41,19 +37,46 @@ public class StockMovementMenu implements IMenu{
     }
 
     public void postAdjustment() {
+        System.out.println("Enter the product SKU:");
+        String sku = InputHandler.getStringInput();
+        System.out.println("Enter operator notes:");
+        String operatorNotes = InputHandler.getStringInput();
+        System.out.println("Enter the quantity of the product:");
+        int quantity = InputHandler.getIntegerInput();
+
+        try
+        {
+            stockMovementService.postAdjustment(sku, quantity, operatorNotes);
+            System.out.println("Adjustment posted successfully!");
+        }
+        catch (MovementValidationException | EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     public void transferZones() {
+        System.out.println("Enter the product SKU:");
+        String sku = InputHandler.getStringInput();
+        System.out.println("Enter the zone to transfer from:");
+        String fromZoneId = ZoneMenu.getZoneSelection(zoneService.getAllZones());
+        System.out.println("Enter the zone to transfer to:");
+        String toZoneId = ZoneMenu.getZoneSelection(zoneService.getAllZones());
+        System.out.println("Enter operator notes:");
+        String operatorNotes = InputHandler.getStringInput();
+
+        try
+        {
+            stockMovementService.transferGoods(sku, fromZoneId, toZoneId, operatorNotes);
+            System.out.println("Goods transferred successfully!");
+        }
+        catch (MovementValidationException | EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     public void dispatchGoods() {
-    }
-
-    public void receiveGoods() {
         System.out.println("Enter the product SKU:");
         String sku = InputHandler.getStringInput();
-        System.out.println("Select the zone to receive the product:");
-        String zoneId = getZoneSelection();
         System.out.println("Enter the quantity of the product:");
         int quantity = InputHandler.getIntegerInput();
         System.out.println("Enter operator notes:");
@@ -61,7 +84,25 @@ public class StockMovementMenu implements IMenu{
 
         try
         {
-            stockMovementService.processMovement(sku, null, zoneId, quantity, MovementType.RECEIVED, operatorNotes);
+            stockMovementService.dispatchGoods(sku, quantity, operatorNotes);
+            System.out.println("Goods dispatched successfully!");
+        }
+        catch (MovementValidationException | EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void receiveGoods() {
+        System.out.println("Enter the product SKU:");
+        String sku = InputHandler.getStringInput();
+        System.out.println("Enter the quantity of the product:");
+        int quantity = InputHandler.getIntegerInput();
+        System.out.println("Enter operator notes:");
+        String operatorNotes = InputHandler.getStringInput();
+
+        try
+        {
+            stockMovementService.receiveGoods(sku, quantity, operatorNotes);
             System.out.println("Goods received successfully!");
         }
         catch (MovementValidationException | EntityNotFoundException e) {
@@ -80,13 +121,4 @@ public class StockMovementMenu implements IMenu{
         System.out.println("[0] Back");
     }
 
-    private String getZoneSelection() {
-        List<Zone> zones = zoneService.getAllZones();
-        for(int i = 0; i < zones.size(); i++) {
-            Zone zone = zones.get(i);
-            System.out.println(i + 1 + ") " + zone.getName() + "(" + zone.getType().name() + ")");
-        }
-        int zoneIndex =  InputHandler.getIntegerInput() - 1;
-        return zones.get(zoneIndex).getId();
-    }
 }

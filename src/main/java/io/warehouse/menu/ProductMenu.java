@@ -78,7 +78,7 @@ public class ProductMenu implements IMenu{
             System.out.println("Enter the quantity:");
             int quantity = InputHandler.getIntegerInput();
             System.out.println("Select the zone:");
-            String zoneId = getZoneSelection();
+            String zoneId = ZoneMenu.getZoneSelection(zoneService.getZonesByZoneType(ZoneType.RECEIVING));
 
             if(ProductType.PERISHABLE.equals(productType)) {
                 System.out.println("Enter the expiration date (yyyy-MM-dd):");
@@ -111,16 +111,6 @@ public class ProductMenu implements IMenu{
             System.out.println("No available zones! You need to create a zone in order to add a product. \n");
         }
         System.out.println("Product added!");
-    }
-
-    private String getZoneSelection() {
-        List<Zone> zones = zoneService.getAllZones();
-        for(int i = 0; i < zones.size(); i++) {
-            Zone zone = zones.get(i);
-            System.out.println(i + 1 + ") " + zone.getName() + "(" + zone.getType().name() + ")");
-        }
-        int zoneIndex =  InputHandler.getIntegerInput() - 1;
-        return zones.get(zoneIndex).getId();
     }
 
     @Override

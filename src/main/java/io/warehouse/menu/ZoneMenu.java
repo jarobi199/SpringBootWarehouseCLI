@@ -1,10 +1,13 @@
 package io.warehouse.menu;
 
 import io.warehouse.enums.ZoneType;
+import io.warehouse.model.Zone;
 import io.warehouse.service.ZoneService;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class ZoneMenu implements IMenu {
@@ -63,5 +66,14 @@ public class ZoneMenu implements IMenu {
         System.out.println("[3] View zone");
         System.out.println("[4] Delete zone");
         System.out.println("[0] Exit");
+    }
+
+    public static String getZoneSelection(List<Zone> zones) {
+        for(int i = 0; i < zones.size(); i++) {
+            Zone zone = zones.get(i);
+            System.out.println(i + 1 + ") " + zone.getName() + "(" + zone.getType().name() + ")");
+        }
+        int zoneIndex =  InputHandler.getIntegerInput() - 1;
+        return zones.get(zoneIndex).getId();
     }
 }

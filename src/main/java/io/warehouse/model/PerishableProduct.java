@@ -11,7 +11,7 @@ public class PerishableProduct extends Product {
     private final LocalDate expiryDate;
 
     public PerishableProduct() {
-        this.expiryDate = null;
+        this.expiryDate = LocalDate.now();
     }
 
     public PerishableProduct(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold, ProductType type, String zoneId, LocalDate expiryDate) {
