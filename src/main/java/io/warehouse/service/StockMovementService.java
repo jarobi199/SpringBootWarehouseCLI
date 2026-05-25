@@ -44,7 +44,7 @@ public class StockMovementService {
         product.validateMovement(stockMovement, target);
 
         // 4. Update quantity on hand
-        //product.adjustQuantity(stockMovement.quantity(), stockMovement.movementType());
+        product.adjustQuantity(stockMovement.quantity(), stockMovement.movementType());
         productRepository.save(product);
 
         // 5. Persist the immutable movement record
