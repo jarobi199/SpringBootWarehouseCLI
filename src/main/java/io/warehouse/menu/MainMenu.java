@@ -18,6 +18,8 @@ public class MainMenu implements IMenu {
     @Autowired
     private StockMovementMenu  stockMovementMenu;
     @Autowired
+    private ReportMenu  reportMenu;
+    @Autowired
     private GoodbyeMenu goodbyeMenu;
 
     @Override
@@ -36,6 +38,7 @@ public class MainMenu implements IMenu {
                 case 1 -> productMenu;
                 case 2 -> zoneMenu;
                 case 3 -> stockMovementMenu;
+                case 4 -> reportMenu;
                 case 5 -> settingsMenu;
                 case 0 -> goodbyeMenu;
                 default -> throw new IllegalStateException("Unexpected value: " + choice);

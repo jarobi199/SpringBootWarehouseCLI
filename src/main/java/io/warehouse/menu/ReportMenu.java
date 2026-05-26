@@ -3,7 +3,9 @@ package io.warehouse.menu;
 import io.warehouse.service.ReportService;
 import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReportMenu implements IMenu {
 
     @Autowired
@@ -15,11 +17,15 @@ public class ReportMenu implements IMenu {
         do {
             printOptions();
             choice = InputHandler.getIntegerInput();
-            /*switch (choice) {
-
-            }*/
+            switch (choice) {
+                case 1 -> inventorySummary();
+            }
         }
         while (choice != 0);
+    }
+
+    private void inventorySummary() {
+        reportService.generateReportSummary();
     }
 
     @Override
