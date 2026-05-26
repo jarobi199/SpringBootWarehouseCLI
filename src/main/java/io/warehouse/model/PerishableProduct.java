@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 public class PerishableProduct extends Product {
 
-    private final LocalDate expiryDate;
+    private LocalDate expiryDate;
 
     public PerishableProduct() {
         this.expiryDate = LocalDate.now();
@@ -19,8 +19,13 @@ public class PerishableProduct extends Product {
         this.expiryDate = expiryDate;
     }
 
+
     public LocalDate getExpiryDate() {
         return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public long daysUntilExpiry() {

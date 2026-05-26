@@ -195,19 +195,11 @@ public class ProductService {
         }
 
         System.out.println("ACTIVE ALERTS");
-        if((expiryMessage == null) && (lowStockMessage == null)) {
-            System.out.println("-There are no alert messages");
+        if(expiryMessage != null) {
+            System.out.println("-" + expiryMessage);
         }
-        else
-        {
-            CommandLineTable alertTable = new CommandLineTable();
-            alertTable.setShowVerticalLines(true);
-            alertTable.setHeaders("TYPE", "MESSAGE");
-            alertTable.addRow("LOW STOCK", lowStockMessage);
-            if(expiryMessage != null) {
-                alertTable.addRow("EXPIRY",expiryMessage);
-            }
-            alertTable.print();
+        if(lowStockMessage != null) {
+            System.out.println("-" + lowStockMessage);
         }
         System.out.println();
     }
