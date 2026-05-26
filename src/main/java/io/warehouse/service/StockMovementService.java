@@ -44,13 +44,14 @@ public class StockMovementService {
         processMovement(product, stockMovement);
     }
 
-    public void transferGoods(String sku, String fromZoneId, String toZoneId, String operatorNotes) {
+    public void transferGoods(String sku, String toZoneId, String operatorNotes) {
         Product product = productRepository.findBySku(sku).stream()
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
 
-        StockMovement stockMovement = new StockMovement(null, product.getId(), fromZoneId, toZoneId, product.getQuantity(), MovementType.TRANSFERRED, LocalDateTime.now(), operatorNotes);
+        StockMovement stockMovement = new StockMovement(null, product.getId(), product.getZoneId(), toZoneId, product.getQuantity(), MovementType.TRANSFERRED, LocalDateTime.now(), operatorNotes);
         processMovement(product, stockMovement);
     }
+
     public void postAdjustment(String sku, int quantity, String operatorNotes) {
         Product product = productRepository.findBySku(sku).stream()
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
@@ -58,6 +59,7 @@ public class StockMovementService {
         StockMovement stockMovement = new StockMovement(null, product.getId(), product.getId(), product.getId(), quantity, MovementType.ADJUSTMENT, LocalDateTime.now(), operatorNotes);
         processMovement(product, stockMovement);
     }
+
     private void processMovement(Product product, StockMovement stockMovement) {
         //1. Get zone
         Zone target = zoneRepository.findById(product.getZoneId())

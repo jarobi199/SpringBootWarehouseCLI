@@ -59,8 +59,6 @@ public class StockMovementMenu implements IMenu{
     public void transferZones() {
         System.out.println("Enter the product SKU:");
         String sku = InputHandler.getStringInput();
-        System.out.println("Enter the zone to transfer from:");
-        String fromZoneId = ZoneMenu.getZoneSelection(zoneService.getAllZones());
         System.out.println("Enter the zone to transfer to:");
         String toZoneId = ZoneMenu.getZoneSelection(zoneService.getAllZones());
         System.out.println("Enter operator notes:");
@@ -68,7 +66,7 @@ public class StockMovementMenu implements IMenu{
 
         try
         {
-            stockMovementService.transferGoods(sku, fromZoneId, toZoneId, operatorNotes);
+            stockMovementService.transferGoods(sku, toZoneId, operatorNotes);
             System.out.println("Goods transferred successfully!");
         }
         catch (MovementValidationException | EntityNotFoundException e) {
