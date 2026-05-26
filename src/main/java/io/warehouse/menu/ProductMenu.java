@@ -3,7 +3,6 @@ package io.warehouse.menu;
 import io.warehouse.enums.HazardClass;
 import io.warehouse.enums.ProductType;
 import io.warehouse.enums.ZoneType;
-import io.warehouse.model.Zone;
 import io.warehouse.service.ProductService;
 import io.warehouse.service.ZoneService;
 import io.warehouse.util.InputHandler;
@@ -121,6 +120,5 @@ public class ProductMenu implements IMenu{
         System.out.println("[4] Delete product");
         System.out.println("[5] Low stock alerts");
         System.out.println("[0] Back");
-
     }
 }
