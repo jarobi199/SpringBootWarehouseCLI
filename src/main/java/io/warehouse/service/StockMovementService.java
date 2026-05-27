@@ -103,8 +103,6 @@ public class StockMovementService {
     }
 
     public void displayMovementHistory(String sku) {
-        String originStr = "N/A";
-        String destinationStr = "N/A";
         Product product = productRepository.findBySku(sku).stream()
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Product not found: " + sku));
         List<StockMovement> stockMovements = stockMovementRepository.findByProductId(product.getId());
@@ -112,20 +110,30 @@ public class StockMovementService {
         table.setShowVerticalLines(true);
         table.setHeaders("ID", "TYPE", "QUANTITY","ORIGIN", "DESTINATION", "TIMESTAMP", "OPERATOR NOTES");
         for (StockMovement stockMovement : stockMovements) {
-            if(stockMovement.fromZoneId() != null) {
-                Zone origin = zoneRepository.findById(stockMovement.fromZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
-                originStr = origin.getDisplayName();
+            String originStr = "N/A";
+            String destinationStr = "N/A";
+
+            if (stockMovement.fromZoneId() != null) {
+                originStr = zoneRepository.findById(stockMovement.fromZoneId())
+                        .map(Zone::getDisplayName)
+                        .orElse("UNKNOWN");
             }
-            if(stockMovement.toZoneId() != null) {
-                Zone origin = zoneRepository.findById(stockMovement.toZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
-                destinationStr = origin.getDisplayName();
+            if (stockMovement.toZoneId() != null) {
+                destinationStr = zoneRepository.findById(stockMovement.toZoneId())
+                        .map(Zone::getDisplayName)
+                        .orElse("UNKNOWN");
             }
 
-            Zone destination = zoneRepository.findById(stockMovement.toZoneId()).orElseThrow(() -> new EntityNotFoundException("Zone not found"));
-            table.addRow(stockMovement.id(), stockMovement.movementType().name(), String.valueOf(stockMovement.quantity()),
-                    originStr, destinationStr, stockMovement.timestamp().toString(),stockMovement.operatorNotes());
+            table.addRow(
+                    stockMovement.id(),
+                    stockMovement.movementType().name(),
+                    String.valueOf(stockMovement.quantity()),
+                    originStr,
+                    destinationStr,
+                    stockMovement.timestamp().toString(),
+                    stockMovement.operatorNotes()
+            );
         }
-        table.print();
     }
 
 }

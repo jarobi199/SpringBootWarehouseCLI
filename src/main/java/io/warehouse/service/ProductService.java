@@ -192,14 +192,17 @@ public class ProductService {
     }
 
     public boolean checkZoneCapacity(String zoneId, int quantity) {
-        boolean result = false;
+        boolean hasCapacity = false;
         Zone zone = zoneRepository.findById(zoneId).orElse(null);
-        if(zone != null) {
-            List<Product> productsInZone = productRepository.findByZoneId(zone.getId());
-            result = (productsInZone.size() + quantity) <= quantity;
+        if (zone != null) {
+            int currentOccupancy = productRepository.findByZoneId(zoneId)
+                    .stream()
+                    .mapToInt(Product::getQuantity)
+                    .sum();
+            hasCapacity = (currentOccupancy + quantity) <= zone.getCapacity();
         }
 
-        return  result;
+        return hasCapacity;
     }
 
 }
