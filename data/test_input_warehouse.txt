@@ -1,0 +1,381 @@
+# =============================================================
+# WAREHOUSE INVENTORY MANAGER - DEBUG MODE TEST INPUT
+# =============================================================
+# Authentication is commented out in MainMenu so no login needed.
+# Lines starting with # and blank lines are skipped by InputHandler.
+#
+# FLOW:
+#   1.  Zones     → Add 5 zones (one per ZoneType)
+#   2.  Zones     → List all zones
+#   3.  Products  → Add 1 Standard product
+#   4.  Products  → Add 1 Perishable product (expiry in 5 days)
+#   5.  Products  → Add 1 Hazardous product
+#   6.  Products  → Add 1 Fragile product
+#   7.  Products  → List all products
+#   8.  Products  → View product detail (Standard)
+#   9.  Products  → Low stock alerts
+#  10.  Stock     → Receive goods (Standard)
+#  11.  Stock     → Transfer Standard to STORAGE
+#  12.  Stock     → Transfer Perishable to COLD_STORAGE
+#  13.  Stock     → Transfer Hazardous to HAZMAT
+#  14.  Stock     → Transfer Fragile to STORAGE
+#  15.  Stock     → Dispatch goods (Standard)
+#  16.  Stock     → Post adjustment (Standard)
+#  17.  Stock     → Movement history (Standard)
+#  18.  Reports   → Inventory summary
+#  19.  Reports   → Stock value by zone
+#  20.  Reports   → Expiry report
+#  21.  Reports   → Movement history report (date range)
+#  22.  Settings  → Add user
+#  23.  Settings  → Change PIN
+#  24.  Settings  → Delete user
+#  25.  Main      → Exit
+#
+# NOTE ON ZONE SELECTION (transferZones):
+#   getZoneSelection() prints a numbered list of ALL zones and reads
+#   an integer index. Zones are inserted in this order:
+#     1) Inbound Dock A      (RECEIVING)
+#     2) Main Storage Hall   (STORAGE)
+#     3) Outbound Dock B     (DISPATCH)
+#     4) Refrigerated Unit 1 (COLD_STORAGE)
+#     5) Chemical Store 1    (HAZMAT)
+#   So entering 2 selects Main Storage Hall, 4 = Refrigerated, etc.
+#
+# NOTE ON DELETE:
+#   deleteProduct and deleteZone require MongoDB-generated IDs known
+#   only at runtime. Test those manually after a first run.
+# =============================================================
+
+
+# -------------------------------------------------------------
+# STEP 1 — Main menu → Zones (2)
+# -------------------------------------------------------------
+2
+
+
+# -------------------------------------------------------------
+# STEP 2 — Zone menu → Add zone (1): Inbound Dock A / RECEIVING
+# -------------------------------------------------------------
+1
+Inbound Dock A
+RECEIVING
+200
+
+
+# -------------------------------------------------------------
+# STEP 3 — Zone menu → Add zone (1): Main Storage Hall / STORAGE
+# -------------------------------------------------------------
+1
+Main Storage Hall
+STORAGE
+1000
+
+
+# -------------------------------------------------------------
+# STEP 4 — Zone menu → Add zone (1): Outbound Dock B / DISPATCH
+# -------------------------------------------------------------
+1
+Outbound Dock B
+DISPATCH
+150
+
+
+# -------------------------------------------------------------
+# STEP 5 — Zone menu → Add zone (1): Refrigerated Unit 1 / COLD_STORAGE
+# -------------------------------------------------------------
+1
+Refrigerated Unit 1
+COLD_STORAGE
+300
+
+
+# -------------------------------------------------------------
+# STEP 6 — Zone menu → Add zone (1): Chemical Store 1 / HAZMAT
+# -------------------------------------------------------------
+1
+Chemical Store 1
+HAZMAT
+100
+
+
+# -------------------------------------------------------------
+# STEP 7 — Zone menu → List all zones (2)
+# -------------------------------------------------------------
+2
+
+
+# -------------------------------------------------------------
+# STEP 8 — Zone menu → Back (0)
+# -------------------------------------------------------------
+0
+
+
+# -------------------------------------------------------------
+# STEP 9 — Main menu → Products (1)
+# -------------------------------------------------------------
+1
+
+
+# -------------------------------------------------------------
+# STEP 10 — Product menu → Add product (1): STANDARD
+#   Zone selection: 1 = Inbound Dock A (RECEIVING)
+# -------------------------------------------------------------
+1
+STANDARD
+PRD-001
+Cardboard Boxes
+Pack of 50 cardboard boxes
+2.99
+50
+300
+1
+
+
+# -------------------------------------------------------------
+# STEP 11 — Product menu → Add product (1): PERISHABLE
+#   Expiry date set close to today to trigger expiry alert
+#   Zone selection: 1 = Inbound Dock A (RECEIVING)
+# -------------------------------------------------------------
+1
+PERISHABLE
+PRD-002
+Fresh Salmon Fillet
+Fresh Atlantic salmon fillet 1kg
+12.50
+200
+40
+1
+2025-06-01
+
+
+# -------------------------------------------------------------
+# STEP 12 — Product menu → Add product (1): HAZARDOUS
+#   Zone selection: 1 = Inbound Dock A (RECEIVING)
+# -------------------------------------------------------------
+1
+HAZARDOUS
+PRD-003
+Acetone Solvent
+Industrial grade acetone 1L
+24.00
+80
+20
+1
+true
+FLAMMABLE
+
+
+# -------------------------------------------------------------
+# STEP 13 — Product menu → Add product (1): FRAGILE
+#   Allowed zones: single value STORAGE (no spaces around comma)
+#   Zone selection: 1 = Inbound Dock A (RECEIVING)
+# -------------------------------------------------------------
+1
+FRAGILE
+PRD-004
+Samsung 65 inch TV
+4K QLED Smart TV
+899.99
+3
+50
+1
+Handle with care do not stack
+STORAGE
+
+
+# -------------------------------------------------------------
+# STEP 14 — Product menu → List all products (2)
+# -------------------------------------------------------------
+2
+
+
+# -------------------------------------------------------------
+# STEP 15 — Product menu → View product detail (3): PRD-001
+# -------------------------------------------------------------
+3
+PRD-001
+
+
+# -------------------------------------------------------------
+# STEP 16 — Product menu → Low stock alerts (5)
+#   PRD-004 qty 3 threshold 50 should trigger alert
+# -------------------------------------------------------------
+5
+
+
+# -------------------------------------------------------------
+# STEP 17 — Product menu → Back (0)
+# -------------------------------------------------------------
+0
+
+
+# -------------------------------------------------------------
+# STEP 18 — Main menu → Stock movements (3)
+# -------------------------------------------------------------
+3
+
+
+# -------------------------------------------------------------
+# STEP 19 — Stock menu → Receive goods (1): PRD-001
+#   Adds 50 units to PRD-001 still in Inbound Dock A
+# -------------------------------------------------------------
+1
+PRD-001
+50
+Initial stock receipt for cardboard boxes
+
+
+# -------------------------------------------------------------
+# STEP 20 — Stock menu → Transfer (3): PRD-001 to Main Storage Hall
+#   Zone list: 1=Inbound Dock A 2=Main Storage Hall 3=Outbound...
+#   Enter 2 for Main Storage Hall
+# -------------------------------------------------------------
+3
+PRD-001
+2
+Moving cardboard boxes to main storage
+
+
+# -------------------------------------------------------------
+# STEP 21 — Stock menu → Transfer (3): PRD-002 to Refrigerated Unit 1
+#   Enter 4 for Refrigerated Unit 1
+# -------------------------------------------------------------
+3
+PRD-002
+4
+Moving salmon to cold storage
+
+
+# -------------------------------------------------------------
+# STEP 22 — Stock menu → Transfer (3): PRD-003 to Chemical Store 1
+#   Enter 5 for Chemical Store 1
+# -------------------------------------------------------------
+3
+PRD-003
+5
+Moving acetone to HAZMAT zone
+
+
+# -------------------------------------------------------------
+# STEP 23 — Stock menu → Transfer (3): PRD-004 to Main Storage Hall
+#   Enter 2 for Main Storage Hall
+# -------------------------------------------------------------
+3
+PRD-004
+2
+Moving TVs to storage
+
+
+# -------------------------------------------------------------
+# STEP 24 — Stock menu → Dispatch goods (2): PRD-001
+#   Dispatch 45 units — leaves 5 below threshold 50 triggers alert
+# -------------------------------------------------------------
+2
+PRD-001
+45
+Dispatching to customer order 1001
+
+
+# -------------------------------------------------------------
+# STEP 25 — Stock menu → Post adjustment (4): PRD-001
+#   Note is entered before quantity per postAdjustment() order
+# -------------------------------------------------------------
+4
+PRD-001
+Stock count correction after physical audit
+2
+
+
+# -------------------------------------------------------------
+# STEP 26 — Stock menu → Movement history (5): PRD-001
+# -------------------------------------------------------------
+5
+PRD-001
+
+
+# -------------------------------------------------------------
+# STEP 27 — Stock menu → Back (0)
+# -------------------------------------------------------------
+0
+
+
+# -------------------------------------------------------------
+# STEP 28 — Main menu → Reports (4)
+# -------------------------------------------------------------
+4
+
+
+# -------------------------------------------------------------
+# STEP 29 — Reports → Inventory summary (1)
+# -------------------------------------------------------------
+1
+
+
+# -------------------------------------------------------------
+# STEP 30 — Reports → Stock value by zone (2)
+# -------------------------------------------------------------
+2
+
+
+# -------------------------------------------------------------
+# STEP 31 — Reports → Expiry report (3)
+#   PRD-002 expires soon and should appear
+# -------------------------------------------------------------
+3
+
+
+# -------------------------------------------------------------
+# STEP 32 — Reports → Movement history report (4)
+#   Broad date range to capture all movements
+# -------------------------------------------------------------
+4
+2025-01-01
+2025-12-31
+
+
+# -------------------------------------------------------------
+# STEP 33 — Reports → Back (0)
+# -------------------------------------------------------------
+0
+
+
+# -------------------------------------------------------------
+# STEP 34 — Main menu → Settings (5)
+# -------------------------------------------------------------
+5
+
+
+# -------------------------------------------------------------
+# STEP 35 — Settings → Add user (1)
+# -------------------------------------------------------------
+1
+John Doe
+jdoe
+password123
+
+
+# -------------------------------------------------------------
+# STEP 36 — Settings → Change PIN (2)
+#   Changes PIN for currently active session user
+# -------------------------------------------------------------
+2
+newpassword456
+
+
+# -------------------------------------------------------------
+# STEP 37 — Settings → Delete user (3)
+# -------------------------------------------------------------
+3
+jdoe
+
+
+# -------------------------------------------------------------
+# STEP 38 — Settings → Back (0)
+# -------------------------------------------------------------
+0
+
+
+# -------------------------------------------------------------
+# STEP 39 — Main menu → Exit (0)
+# -------------------------------------------------------------
+0
