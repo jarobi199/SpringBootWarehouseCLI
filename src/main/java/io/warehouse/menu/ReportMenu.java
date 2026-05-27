@@ -21,11 +21,16 @@ public class ReportMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 -> inventorySummary();
+                case 2 -> stockValueByZone();
                 case 3 -> expiryReport();
                 case 4 -> movementHistoryReport();
             }
         }
         while (choice != 0);
+    }
+
+    public void stockValueByZone() {
+        reportService.generateStockValueByZoneReport();
     }
 
     public void movementHistoryReport() {

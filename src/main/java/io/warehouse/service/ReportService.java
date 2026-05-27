@@ -86,16 +86,18 @@ public class ReportService {
         stockMovements.forEach(movement -> {
             String sku = "N/A";
             String name = "N/A";
-            String fromZone = "N/A";
-            String toZone = "N/A";
             Product product = productRepository.findById(movement.productId()).orElse(null);
             if (product != null) {
                 sku  = product.getSku();
                 name = product.getName();
             }
 
-             fromZone = zoneRepository.findById(movement.fromZoneId()).orElse(null).getDisplayName();
-             toZone   = zoneRepository.findById(movement.toZoneId()).orElse(null).getDisplayName();
+             String fromZone = zoneRepository.findById(movement.fromZoneId())
+                     .map(Zone::getDisplayName)
+                     .orElse("N/A");
+             String toZone =  zoneRepository.findById(movement.toZoneId())
+                     .map(Zone::getDisplayName)
+                     .orElse("N/A");
             table.addRow(
                     movement.timestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                     sku,
@@ -107,5 +109,26 @@ public class ReportService {
             );
         });
         table.print();
+    }
+
+    public void generateStockValueByZoneReport() {
+        List<Zone> zones = zoneRepository.findAll();
+
+        if (zones.isEmpty()) {
+            System.out.println("No zones found.");
+        }
+        else {
+            System.out.println("STOCK VALUE BY ZONE");
+            CommandLineTable zoneStockValueTable = new CommandLineTable();
+            zoneStockValueTable.setShowVerticalLines(true);
+            zoneStockValueTable.setHeaders("ZONE", "TOTAL PRODUCT COUNT", "TOTAL STOCK VALUE","ALERT");
+            zones.forEach(zone -> {
+                int totalProductCount = productRepository.findByZoneId(zone.getId()).stream().mapToInt(Product::getQuantity).sum();
+                double totalStockValue = productRepository.findByZoneId(zone.getId()).stream().mapToDouble(Product::calculateValue).sum();
+                int occupancyPercentage = (totalProductCount * 100) / zone.getCapacity();
+                zoneStockValueTable.addRow(zone.getDisplayName(), String.valueOf(totalProductCount), "$" + totalStockValue, (occupancyPercentage >= 80) ? "This zone is over 80% capacity!" : "N/A");
+            });
+            zoneStockValueTable.print();
+        }
     }
 }
