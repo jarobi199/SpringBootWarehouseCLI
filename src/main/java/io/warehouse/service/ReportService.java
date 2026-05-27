@@ -41,7 +41,7 @@ public class ReportService {
         zoneRepository.findAll().forEach(zone -> {
             int currentOccupancy = productRepository.findByZoneId(zone.getId()).stream().mapToInt(Product::getQuantity).sum();
             int occupancyPercentage = (currentOccupancy * 100) / zone.getCapacity();
-            int filled = Math.round(occupancyPercentage * 10 / 100) ;
+            int filled = Math.round(occupancyPercentage / 10.0f);
             String bar = "▓".repeat(filled) + "░".repeat(10 - filled);
             String fraction = currentOccupancy + "/" + zone.getCapacity();
             zoneUtilizationTable.addRow(zone.getDisplayName(), bar,  fraction, occupancyPercentage + "%");
