@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -111,24 +112,54 @@ public class ReportService {
         table.print();
     }
 
-    public void generateStockValueByZoneReport() {
-        List<Zone> zones = zoneRepository.findAll();
+    private List<ZoneStockValue> getStockValueByZone() {
+        return zoneRepository.findAll().stream()
+                .map(zone -> {
+                    List<Product> products = productRepository.findByZoneId(zone.getId());
+                    double totalValue = products.stream()
+                            .mapToDouble(Product::calculateValue)
+                            .sum();
+                    int occupancy = products.stream()
+                            .mapToInt(Product::getQuantity)
+                            .sum();
+                    int occupancyPercent = zone.getCapacity() > 0
+                            ? (occupancy * 100) / zone.getCapacity()
+                            : 0;
+                    return new ZoneStockValue(
+                            zone.getDisplayName(),
+                            products.size(),
+                            totalValue,
+                            occupancyPercent
+                    );
+                })
+                .sorted(Comparator.comparingDouble(ZoneStockValue::totalValue).reversed())
+                .toList();
+    }
 
-        if (zones.isEmpty()) {
+    public void generateStockValueByZoneReport() {
+        List<ZoneStockValue> results = getStockValueByZone();
+
+        if (results.isEmpty()) {
             System.out.println("No zones found.");
         }
         else {
-            System.out.println("STOCK VALUE BY ZONE");
-            CommandLineTable zoneStockValueTable = new CommandLineTable();
-            zoneStockValueTable.setShowVerticalLines(true);
-            zoneStockValueTable.setHeaders("ZONE", "TOTAL PRODUCT COUNT", "TOTAL STOCK VALUE","ALERT");
-            zones.forEach(zone -> {
-                int totalProductCount = productRepository.findByZoneId(zone.getId()).stream().mapToInt(Product::getQuantity).sum();
-                double totalStockValue = productRepository.findByZoneId(zone.getId()).stream().mapToDouble(Product::calculateValue).sum();
-                int occupancyPercentage = (totalProductCount * 100) / zone.getCapacity();
-                zoneStockValueTable.addRow(zone.getDisplayName(), String.valueOf(totalProductCount), "$" + totalStockValue, (occupancyPercentage >= 80) ? "This zone is over 80% capacity!" : "N/A");
-            });
-            zoneStockValueTable.print();
+            CommandLineTable table = new CommandLineTable();
+            table.setShowVerticalLines(true);
+            table.setHeaders("RANK", "ZONE", "PRODUCTS", "TOTAL VALUE", "OCCUPANCY PERCENTAGE", "ALERT");
+            int rank = 1;
+            for (ZoneStockValue zsv : results) {
+                String alert = zsv.occupancyPercent() >= 80 ? "This zone is over 80% capacity! ⚠" : "N/A";
+                table.addRow(
+                        String.valueOf(rank++),
+                        zsv.zoneName(),
+                        String.valueOf(zsv.productCount()),
+                        String.format("$%.2f", zsv.totalValue()),
+                        zsv.occupancyPercent() + "%",
+                        alert
+                );
+            }
+            table.print();
         }
     }
+    private record ZoneStockValue(String zoneName, int productCount, double totalValue, int occupancyPercent) {}
 }
