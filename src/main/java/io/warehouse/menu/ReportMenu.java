@@ -19,12 +19,17 @@ public class ReportMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 -> inventorySummary();
+                case 3 -> expiryReport();
             }
         }
         while (choice != 0);
     }
 
-    private void inventorySummary() {
+    public void expiryReport() {
+        reportService.generateExpiryReport();
+    }
+
+    public void inventorySummary() {
         reportService.generateReportSummary();
     }
 

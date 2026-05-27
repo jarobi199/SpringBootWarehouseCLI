@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +31,7 @@ public class ProductService {
     public void createPerishable(String sku, String name, String description, double unitPrice, int quantity,
                                  int reorderThreshold, ProductType productType, String zoneId, LocalDate expiryDate) {
         Product perishableProduct = ProductFactory.createPerishable(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, expiryDate);
-        if(updateZoneOccupancy(zoneId, quantity)) {
+        if(checkZoneCapacity(zoneId, quantity)) {
             productRepository.save(perishableProduct);
         }
         else
@@ -44,7 +43,7 @@ public class ProductService {
     public void createFragile(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold,
                               ProductType productType, String zoneId, String instructions, List<ZoneType> allowedZones) {
         Product fragileProduct = ProductFactory.createFragile(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, instructions, allowedZones);
-        if(updateZoneOccupancy(zoneId, quantity)) {
+        if(checkZoneCapacity(zoneId, quantity)) {
             productRepository.save(fragileProduct);
         }
         else
@@ -56,7 +55,7 @@ public class ProductService {
     public void createHazardous(String sku, String name, String description, double unitPrice, int quantity, int reorderThreshold,
                               ProductType productType, String zoneId, boolean requiresVentilation, HazardClass hazardClass) {
         Product hazardousProduct = ProductFactory.createHazardous(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId, requiresVentilation, hazardClass);
-        if(updateZoneOccupancy(zoneId, quantity)) {
+        if(checkZoneCapacity(zoneId, quantity)) {
             productRepository.save(hazardousProduct);
         }
         else
@@ -68,25 +67,13 @@ public class ProductService {
     public void createStandard(String sku, String name, String description, double unitPrice, int quantity,
                                int reorderThreshold, ProductType productType, String zoneId) {
         Product standardProduct = ProductFactory.createStandard(sku, name, description, unitPrice, quantity, reorderThreshold, productType, zoneId);
-        if(updateZoneOccupancy(zoneId, quantity)) {
+        if(checkZoneCapacity(zoneId, quantity)) {
             productRepository.save(standardProduct);
         }
         else
         {
             System.out.println("This product cannot be added! The zone does not have enough capacity.");
         }
-    }
-
-    public boolean updateZoneOccupancy(String zoneId, int quantity) {
-        boolean result = false;
-        Optional<Zone> optionalZone = zoneRepository.findById(zoneId);
-        if(optionalZone.isPresent() && optionalZone.get().hasCapacity(quantity)) {
-            Zone zone = optionalZone.get();
-            zone.setCurrentOccupancy(zone.getCurrentOccupancy() + quantity);
-            zoneRepository.save(zone);
-            result = true;
-        }
-        return result;
     }
 
     public void listProducts() {
@@ -202,6 +189,17 @@ public class ProductService {
             System.out.println("-" + lowStockMessage);
         }
         System.out.println();
+    }
+
+    public boolean checkZoneCapacity(String zoneId, int quantity) {
+        boolean result = false;
+        Zone zone = zoneRepository.findById(zoneId).orElse(null);
+        if(zone != null) {
+            List<Product> productsInZone = productRepository.findByZoneId(zone.getId());
+            result = (productsInZone.size() + quantity) <= quantity;
+        }
+
+        return  result;
     }
 
 }

@@ -11,7 +11,6 @@ public class Zone {
     private String name;
     private ZoneType type;
     private int capacity;
-    private int currentOccupancy;
 
     public Zone() {
         //No argument constructor
@@ -55,28 +54,8 @@ public class Zone {
         this.capacity = capacity;
     }
 
-    public int getCurrentOccupancy() {
-        return currentOccupancy;
-    }
-
-    public void setCurrentOccupancy(int currentOccupancy) {
-        this.currentOccupancy = currentOccupancy;
-    }
-
     public boolean hasCapacity(int units) {
-        return (currentOccupancy + units) <= capacity;
-    }
-
-    public int getOccupancyPercentage() {
-        return (currentOccupancy * 100) / capacity;
-    }
-
-    public void addOccupancy(int units) {
-        currentOccupancy = currentOccupancy + units;
-    }
-
-    public void removeOccupancy(int units) {
-        currentOccupancy = currentOccupancy - units;
+        return units <= capacity;
     }
 
     public String getDisplayName() {

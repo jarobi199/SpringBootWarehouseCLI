@@ -40,17 +40,22 @@ public class ZoneService {
     public void listZones() {
         List<Zone> zones = zoneRepository.findAll();
         CommandLineTable table = new CommandLineTable();
-        table.setShowVerticalLines(true);//if false (default) then no vertical lines are shown
-        table.setHeaders("NAME", "TYPE", "CAPACITY","CURRENT OCCUPANCY","OCCUPANCY PERCENTAGE");//
+        table.setShowVerticalLines(true);
+
+        table.setHeaders("NAME", "TYPE", "CAPACITY","CURRENT OCCUPANCY","OCCUPANCY PERCENTAGE");
         for (Zone zone : zones) {
-            table.addRow(zone.getName(), zone.getType().name(), String.valueOf(zone.getCapacity()), String.valueOf(zone.getCurrentOccupancy()), zone.getOccupancyPercentage() + "%");
+            List<Product> productInZone = productRepository.findByZoneId(zone.getId());
+            int currentOccupancy = productRepository.findByZoneId(zone.getId()).stream().mapToInt(Product::getQuantity).sum();
+            int occupancyPercentage = (currentOccupancy * 100) / zone.getCapacity();
+            table.addRow(zone.getName(), zone.getType().name(), String.valueOf(zone.getCapacity()), String.valueOf(currentOccupancy), occupancyPercentage + "%");
         }
         table.print();
     }
 
     public void deleteZone(String id) {
         Optional<Zone> optionalZone = zoneRepository.findById(id);
-        if (optionalZone.isPresent() && optionalZone.get().getCurrentOccupancy() == 0) {
+        List<Product> productInZone = productRepository.findByZoneId(id);
+        if (optionalZone.isPresent() && productInZone.isEmpty()) {
             zoneRepository.delete(optionalZone.get());
             System.out.println("Zone deleted successfully!");
         }
@@ -60,10 +65,7 @@ public class ZoneService {
     }
 
     public void viewZone(String zoneId) {
-        Zone zone = zoneRepository.findById(zoneId).orElse(null);
-        if(zone != null) {
-            System.out.println("ZONE: " + zone.getName() + " (" + zone.getType().name() + ")");
-        }
+        zoneRepository.findById(zoneId).ifPresent(zone -> System.out.println("ZONE: " + zone.getName() + " (" + zone.getType().name() + ")"));
         List<Product> products = productRepository.findByZoneId(zoneId);
         CommandLineTable table = new CommandLineTable();
         table.setShowVerticalLines(true);
