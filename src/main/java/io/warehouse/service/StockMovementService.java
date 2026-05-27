@@ -127,4 +127,5 @@ public class StockMovementService {
         }
         table.print();
     }
+
 }

@@ -3,9 +3,12 @@ package io.warehouse.repository;
 import io.warehouse.model.StockMovement;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StockMovementRepository extends MongoRepository<StockMovement, String> {
     List<StockMovement> findByProductId(String productId);
     List<StockMovement> findTop3ByProductIdOrderByTimestampDesc(String productId);
+    List<StockMovement> findByTimestampBetweenOrderByTimestampDesc(
+            LocalDateTime from, LocalDateTime to);
 }

@@ -2,13 +2,17 @@ package io.warehouse.service;
 
 import io.warehouse.model.PerishableProduct;
 import io.warehouse.model.Product;
+import io.warehouse.model.StockMovement;
 import io.warehouse.model.Zone;
 import io.warehouse.repository.ProductRepository;
+import io.warehouse.repository.StockMovementRepository;
 import io.warehouse.repository.ZoneRepository;
 import io.warehouse.util.CommandLineTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -18,6 +22,8 @@ public class ReportService {
     private ProductRepository productRepository;
     @Autowired
     private ZoneRepository zoneRepository;
+    @Autowired
+    private StockMovementRepository stockMovementRepository;
 
     public void generateReportSummary() {
 
@@ -63,5 +69,43 @@ public class ReportService {
         });
         expiryReportTable.print();
         System.out.println();
+    }
+
+    public void getMovementHistoryReport(LocalDateTime from, LocalDateTime to) {
+        List<StockMovement> stockMovements = stockMovementRepository.
+                findByTimestampBetweenOrderByTimestampDesc(from, to);
+
+        if (stockMovements.isEmpty()) {
+            System.out.println("No movements found for the selected date range.");
+            return;
+        }
+
+        CommandLineTable table = new CommandLineTable();
+        table.setShowVerticalLines(true);
+        table.setHeaders("TIMESTAMP", "SKU", "DESCRIPTION", "TYPE", "QTY", "FROM ZONE", "TO ZONE");
+        stockMovements.forEach(movement -> {
+            String sku = "N/A";
+            String name = "N/A";
+            String fromZone = "N/A";
+            String toZone = "N/A";
+            Product product = productRepository.findById(movement.productId()).orElse(null);
+            if (product != null) {
+                sku  = product.getSku();
+                name = product.getName();
+            }
+
+             fromZone = zoneRepository.findById(movement.fromZoneId()).orElse(null).getDisplayName();
+             toZone   = zoneRepository.findById(movement.toZoneId()).orElse(null).getDisplayName();
+            table.addRow(
+                    movement.timestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                    sku,
+                    name,
+                    movement.movementType().toString(),
+                    String.valueOf(movement.quantity()),
+                    fromZone,
+                    toZone
+            );
+        });
+        table.print();
     }
 }

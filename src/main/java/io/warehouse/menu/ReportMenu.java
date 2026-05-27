@@ -5,6 +5,8 @@ import io.warehouse.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class ReportMenu implements IMenu {
 
@@ -20,9 +22,20 @@ public class ReportMenu implements IMenu {
             switch (choice) {
                 case 1 -> inventorySummary();
                 case 3 -> expiryReport();
+                case 4 -> movementHistoryReport();
             }
         }
         while (choice != 0);
+    }
+
+    public void movementHistoryReport() {
+
+        System.out.print("Start date (yyyy-MM-dd): ");
+        LocalDate startDate = InputHandler.getDateInput();
+        System.out.print("End date (yyyy-MM-dd): ");
+        LocalDate endDate = InputHandler.getDateInput();
+
+        reportService.getMovementHistoryReport(startDate.atStartOfDay(), endDate.atTime(23, 59, 59));
     }
 
     public void expiryReport() {
